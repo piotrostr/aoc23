@@ -11,9 +11,12 @@ func TestOne(t *testing.T) {
 	pqr3stu8vwx
 	a1b2c3d4e5f
 	treb7uchet`
-	got := one.Trebuchet(input)
-	want := 142
-	if got != want {
-		t.Errorf("Trebuchet(input) = %d; want %d", got, want)
+	res, err := one.Trebuchet(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var expect int64 = 142
+	if *res != expect {
+		t.Errorf("Trebuchet(%s) = %d; want %d", input, res, expect)
 	}
 }
