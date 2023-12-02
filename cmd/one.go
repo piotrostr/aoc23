@@ -26,7 +26,14 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		res, err := one.Trebuchet(string(content))
+		if err != nil {
+			log.Fatal(err)
+		}
+		println(*res)
+
+		res, err = one.CalibratedTrebuchet(string(content))
 		if err != nil {
 			log.Fatal(err)
 		}
