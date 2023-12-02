@@ -1,11 +1,15 @@
 package one
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
 
 func Trebuchet(input string) (*int64, error) {
+	if len(input) == 0 {
+		return nil, fmt.Errorf("Trebuchet(%s): empty input", input)
+	}
 	var sum int64 = 0
 	lines := strings.Split(input, "\n")
 	for l := 0; l < len(lines); l++ {
