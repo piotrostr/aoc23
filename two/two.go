@@ -85,3 +85,75 @@ func CubeConundrum(input string) (*int, error) {
 
 	return &sumOfValidIDs, nil
 }
+
+func CubeConundrumPartTwo(input string) (*int, error) {
+	powerscoresum := 0
+	lines := strings.Split(input, "\n")
+	for i := range lines {
+		line := lines[i]
+		_, _, powerscore, err := ProcessLinePartTwo(line)
+		if err != nil {
+			return nil, err
+		}
+		powerscoresum += *powerscore
+	}
+	return &powerscoresum, nil
+}
+
+// ProcessLine returns whether the line is valid, its sum and error in case
+// something is off
+func ProcessLinePartTwo(line string) (*int, bool, *int, error) {
+	gameVsRecordsSplit := strings.Split(line, ":")
+	if len(gameVsRecordsSplit) != 2 {
+		return nil, false, nil, fmt.Errorf("invalid input %s", line)
+	}
+
+	id, err := strconv.Atoi(strings.Split(gameVsRecordsSplit[0], " ")[1])
+	if err != nil {
+		return nil, false, nil, err
+	}
+	records := gameVsRecordsSplit[1]
+
+	setsSplit := strings.Split(records, ";")
+
+	minPerColor := map[string]int{}
+
+	for i := range setsSplit {
+		set := setsSplit[i]
+		if strings.Contains(set, ",") {
+			cubes := strings.Split(set, ",")
+			for j := range cubes {
+				num, color, err := ProcessCube(cubes[j])
+				if err != nil {
+					return &id, false, nil, nil
+				}
+				// if no color in map yet set the key color to first value of num
+				if _, ok := minPerColor[*color]; !ok {
+					minPerColor[*color] = *num
+				}
+				if *num > minPerColor[*color] {
+					minPerColor[*color] = *num
+				}
+			}
+		} else {
+			num, color, err := ProcessCube(set)
+			if err != nil {
+				return &id, false, nil, nil
+			}
+			// if no color in map yet set the key color to first value of num
+			if _, ok := minPerColor[*color]; !ok {
+				minPerColor[*color] = *num
+			}
+			if *num > minPerColor[*color] {
+				minPerColor[*color] = *num
+			}
+		}
+	}
+	if len(minPerColor) != 3 {
+		return nil, false, nil, fmt.Errorf("could not parse three colors from line %s", line)
+	}
+
+	powerscore := minPerColor["red"] * minPerColor["green"] * minPerColor["blue"]
+
+	return &id, true, &powerscore, nil
+}
