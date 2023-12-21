@@ -1,46 +1,78 @@
 package three
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
 
-// GearRatios parses the numbers from the engine schematic, each number
-// containing an array of set of coordinates '123': [[i1, j1], [i2, j1], ...] of its
-// coordinates
-// it then checks if then numbers are valid, writing the results to another
-// mapping lastly, the numbers can be processed into a sum if they are valid,
-// providing the solution to the AOC problem
 func GearRatios(input string) (*int, error) {
 	numberLocations := map[string][][]int{}
 	lines := strings.Split(input, "\n")
-	for i := range lines {
+
+	// Parse the schematic for numbers and their locations
+	for i, line := range lines {
 		num := ""
 		locations := [][]int{}
-		for j := range lines[i] {
-			if IsNum(string(lines[i][j])) {
-				num += string(lines[i][j])
+		for j, char := range line {
+			if char >= '0' && char <= '9' { // Check if character is a digit
+				num += string(char)
 				locations = append(locations, []int{i, j})
 			} else {
-				// write res
-				if num != "" && len(locations) > 0 {
-					numberLocations[num] = locations
+				if num != "" {
+					numberLocations[num] = append(numberLocations[num], locations...)
 				}
-
-				// reset num
 				num = ""
 				locations = [][]int{}
 			}
 		}
+		if num != "" {
+			numberLocations[num] = append(numberLocations[num], locations...)
+		}
 	}
-	fmt.Printf("%+v", numberLocations)
-	return nil, nil
+
+	sumOfPartNums := 0
+	maxX := len(lines[0]) - 1
+	maxY := len(lines) - 1
+
+	// Check if numbers are part numbers
+	for numstr, arrOfCords := range numberLocations {
+		isPartNum := false
+
+		for _, coords := range arrOfCords {
+			x, y := coords[1], coords[0]
+
+			// Check all adjacent positions for symbols
+			for dx := -1; dx <= 1; dx++ {
+				for dy := -1; dy <= 1; dy++ {
+					if dx == 0 && dy == 0 {
+						continue // Skip the number itself
+					}
+					nx, ny := x+dx, y+dy
+					if nx >= 0 && ny >= 0 && nx <= maxX && ny <= maxY {
+						if IsSymbol(lines[ny][nx]) {
+							isPartNum = true
+							break
+						}
+					}
+				}
+				if isPartNum {
+					break
+				}
+			}
+		}
+
+		if isPartNum {
+			num, err := strconv.Atoi(numstr)
+			if err != nil {
+				return nil, err
+			}
+			sumOfPartNums += num
+		}
+	}
+
+	return &sumOfPartNums, nil
 }
 
-func IsNum(s string) bool {
-	if _, err := strconv.Atoi(s); err == nil {
-		return true
-	}
-	return false
+func IsSymbol(char byte) bool {
+	return char != '.' && (char < '0' || char > '9')
 }

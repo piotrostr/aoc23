@@ -8,15 +8,15 @@ import (
 
 func TestGearRatios(t *testing.T) {
 	input := `467..114..
-	...*......
-	..35..633.
-	......#...
-	617*......
-	.....+.58.
-	..592.....
-	......755.
-	...$.*....
-	.664.598..`
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..`
 
 	res, err := three.GearRatios(input)
 	if err != nil {
@@ -26,5 +26,35 @@ func TestGearRatios(t *testing.T) {
 	expected := 4361
 	if *res != expected {
 		t.Fatalf("GearRatios(%s) => %d != %d", input, *res, expected)
+	}
+}
+
+func TestIsSymbol(t *testing.T) {
+	if three.IsSymbol('.') {
+		t.Fatal("IsSymbol('.') => true")
+	}
+	if !three.IsSymbol('*') {
+		t.Fatal("IsSymbol('*') => false")
+	}
+	if !three.IsSymbol('$') {
+		t.Fatal("IsSymbol('$') => false")
+	}
+	if !three.IsSymbol('+') {
+		t.Fatal("IsSymbol('+') => false")
+	}
+	if !three.IsSymbol('#') {
+		t.Fatal("IsSymbol('#') => false")
+	}
+	if !three.IsSymbol('@') {
+		t.Fatal("IsSymbol('@') => false")
+	}
+	if !three.IsSymbol('&') {
+		t.Fatal("IsSymbol('&') => false")
+	}
+	if !three.IsSymbol('/') {
+		t.Fatal("IsSymbol('/') => false")
+	}
+	if !three.IsSymbol('\\') {
+		t.Fatal("IsSymbol('\\') => false")
 	}
 }
