@@ -1,0 +1,24 @@
+name: Go Format
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.18"
+      - name: Format
+        run: |
+          if [ -n "$(gofmt -l .)" ]; then
+            echo "You need to run gofmt on the following files:"
+            gofmt -l .
+            exit 1
+          fi
