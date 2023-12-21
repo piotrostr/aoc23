@@ -33,6 +33,12 @@ to quickly create a Cobra application.`,
 			log.Fatal(err)
 		}
 		fmt.Println(*res)
+
+		res, err = four.ScratchcardsPartTwo(string(input))
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(*res)
 	},
 }
 
