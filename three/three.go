@@ -1,9 +1,15 @@
 package three
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
+
+func PushNumberLocation(numberLocations map[string][][]int, numstr string, i int, j int, locations [][]int) {
+	index := fmt.Sprintf("%s-%d-%d", numstr, i, j)
+	numberLocations[index] = append(numberLocations[index], locations...)
+}
 
 func GearRatios(input string) (*int, error) {
 	numberLocations := map[string][][]int{}
@@ -14,19 +20,19 @@ func GearRatios(input string) (*int, error) {
 		num := ""
 		locations := [][]int{}
 		for j, char := range line {
-			if char >= '0' && char <= '9' { // Check if character is a digit
+			if IsDigit(char) {
 				num += string(char)
 				locations = append(locations, []int{i, j})
 			} else {
 				if num != "" {
-					numberLocations[num] = append(numberLocations[num], locations...)
+					PushNumberLocation(numberLocations, num, i, j, locations)
 				}
 				num = ""
 				locations = [][]int{}
 			}
 		}
 		if num != "" {
-			numberLocations[num] = append(numberLocations[num], locations...)
+			PushNumberLocation(numberLocations, num, i, len(line), locations)
 		}
 	}
 
@@ -61,8 +67,9 @@ func GearRatios(input string) (*int, error) {
 			}
 		}
 
+		println(numstr, isPartNum)
 		if isPartNum {
-			num, err := strconv.Atoi(numstr)
+			num, err := strconv.Atoi(strings.Split(numstr, "-")[0])
 			if err != nil {
 				return nil, err
 			}
@@ -75,4 +82,8 @@ func GearRatios(input string) (*int, error) {
 
 func IsSymbol(char byte) bool {
 	return char != '.' && (char < '0' || char > '9')
+}
+
+func IsDigit(char rune) bool {
+	return char >= '0' && char <= '9'
 }
