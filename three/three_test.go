@@ -58,3 +58,26 @@ func TestIsSymbol(t *testing.T) {
 		t.Fatal("IsSymbol('\\') => false")
 	}
 }
+
+func TestGearRatiosPartTwo(t *testing.T) {
+	input := `467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..`
+
+	res, err := three.GearRatiosPartTwo(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := 467835
+	if *res != expected {
+		t.Fatalf("GearRatios(%s) => %d != %d", input, *res, expected)
+	}
+}
