@@ -96,7 +96,7 @@ func ScratchcardsPartTwo(input string) (*int, error) {
 	cards := map[int]*Card{}
 
 	lines := strings.Split(input, "\n")
-	// nums := map[string]
+
 	for _, line := range lines {
 		spl := strings.Split(line, ":")
 		if len(spl) != 2 {
