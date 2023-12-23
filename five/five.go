@@ -100,18 +100,8 @@ func Fertilizer(input string) (*int, error) {
 
 	locations := []int{}
 	for _, seed := range *seedsToPlant {
-		src := "seed"
-		dst := maps[src].Dst
-		val := maps[src].CorrespondingTo(seed)
-		for {
-			if dst == "location" {
-				locations = append(locations, val)
-				break
-			}
-			src = dst
-			dst = maps[src].Dst
-			val = maps[src].CorrespondingTo(val)
-		}
+		location := MatchSeedToLocation(seed, maps)
+		locations = append(locations, location)
 	}
 
 	min := Min(locations...)
@@ -129,4 +119,52 @@ func Min(vars ...int) int {
 	}
 
 	return min
+}
+
+func FertilizerPartTwo(input string) (*int, error) {
+	maps := Maps{}
+	blocks := strings.Split(input, "\n\n")
+	seedsblock := blocks[0]
+	blocks = blocks[1:]
+	seedsToPlant, err := ParseSeedsToPlant(seedsblock)
+	if err != nil {
+		return nil, err
+	}
+	for _, block := range blocks {
+		m, err := ParseMap(block)
+		maps[m.Src] = m
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	locations := []int{}
+	seeds := *seedsToPlant // deref to index
+	for i := 0; i < len(seeds)-1; i += 2 {
+		seedstart := seeds[i]
+		seedlength := seeds[i+1]
+		for j := 0; j < seedlength; j++ {
+			location := MatchSeedToLocation(seedstart+j, maps)
+			locations = append(locations, location)
+		}
+	}
+
+	min := Min(locations...)
+
+	return &min, nil
+}
+
+func MatchSeedToLocation(seed int, maps Maps) int {
+	src := "seed"
+	dst := maps[src].Dst
+	val := maps[src].CorrespondingTo(seed)
+	for {
+		if dst == "location" {
+			break
+		}
+		src = dst
+		dst = maps[src].Dst
+		val = maps[src].CorrespondingTo(val)
+	}
+	return val
 }

@@ -127,3 +127,20 @@ func correspondingnum(num) {
   return num
 }
 ```
+
+For the second part there was a similar issue - brute-force took a while to run
+(~5min-ish)
+
+The optimization was not trivial, so I let the brute-force run as I worked on
+the elegant solution, before I figured it out the submission passed. Yay!
+
+My idea was to create something along a range system where you can reverse the problem
+
+Rather than map from seed to location, map from location to seed, for each of
+the maps find out the most optimal ranges (the minima) and eventually find the
+best range for each of the seeds, then the minimum seed num that falls into that
+given range would be our answer, we then perform the
+`MatchSeedToLocation(seed)` knowing that it is *the* seed
+
+That would mean only using comparison, resulting close to O(n) memory and
+O(n) compute (can't promise though)

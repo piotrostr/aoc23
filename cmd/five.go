@@ -32,6 +32,12 @@ to quickly create a Cobra application.`,
 			log.Fatal(err)
 		}
 		println(*res)
+
+		res, err = five.FertilizerPartTwo(string(input))
+		if err != nil {
+			log.Fatal(err)
+		}
+		println(*res)
 	},
 }
 
