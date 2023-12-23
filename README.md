@@ -108,3 +108,22 @@ seed-to-soil map:
 1288156819 0 597717
 2937935625 3018234602 403101363
 ```
+
+Rather than brute-forcing out all of the combinations, and doing map lookup, it
+has to be dynamically done, i.e. the range has to be used for comparison and
+rather than store the entire range in memory, just build the single
+corresponding number
+
+seednum (num) 123
+range 123412345 20 150 - dststart srcstart len
+
+```pseudo
+func correspondingnum(num) {
+  for dststart, srcstart, len in _ranges {
+    if srcstart <= num <= srcstart + len  {
+      return dststart + (num - srcstart)
+    }
+  }
+  return num
+}
+```

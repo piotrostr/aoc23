@@ -14,18 +14,23 @@ type Map struct {
 	Src string
 	Dst string
 
-	// Items is a mapping of Src-to-Dst
-	// e.g.
-	// seed 50 => soil 98
-	// seed 51 => soil 99
-	Items map[int]int
+	Ranges []Range
 }
 
-func (m *Map) CorrespondingTo(number int) int {
-	if val, ok := m.Items[number]; ok {
-		return val
+type Range struct {
+	DstStart int
+	SrcStart int
+	Length   int
+}
+
+func (m *Map) CorrespondingTo(num int) int {
+	for _, r := range m.Ranges {
+		if r.SrcStart <= num && num <= r.SrcStart+r.Length {
+			res := r.DstStart + (num - r.SrcStart)
+			return res
+		}
 	}
-	return number
+	return num
 }
 
 func ParseMap(block string) (*Map, error) {
@@ -37,9 +42,9 @@ func ParseMap(block string) (*Map, error) {
 	}
 	src, dst := spl[0], spl[2]
 	m := &Map{
-		Src:   src,
-		Dst:   dst,
-		Items: map[int]int{},
+		Src:    src,
+		Dst:    dst,
+		Ranges: []Range{},
 	}
 	for _, line := range lines[1:] {
 		spl := strings.Split(line, " ")
@@ -49,11 +54,11 @@ func ParseMap(block string) (*Map, error) {
 		// important but weird, it is destination start, source start, length
 		// so {dst, src, len} rather than {src, dst, len}
 		dststr, srcstr, lengthstr := spl[0], spl[1], spl[2]
-		dst, err := strconv.Atoi(dststr)
+		dststart, err := strconv.Atoi(dststr)
 		if err != nil {
 			return nil, err
 		}
-		src, err := strconv.Atoi(srcstr)
+		srcstart, err := strconv.Atoi(srcstr)
 		if err != nil {
 			return nil, err
 		}
@@ -61,9 +66,11 @@ func ParseMap(block string) (*Map, error) {
 		if err != nil {
 			return nil, err
 		}
-		for i := 0; i < length; i++ {
-			m.Items[src+i] = dst + i
-		}
+		m.Ranges = append(m.Ranges, Range{
+			DstStart: dststart,
+			SrcStart: srcstart,
+			Length:   length,
+		})
 	}
 	return m, nil
 }
@@ -98,7 +105,7 @@ func Fertilizer(input string) (*int, error) {
 		val := maps[src].CorrespondingTo(seed)
 		for {
 			if dst == "location" {
-				locations = append(locations, maps[src].CorrespondingTo(val))
+				locations = append(locations, val)
 				break
 			}
 			src = dst
