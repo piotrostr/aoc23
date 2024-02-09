@@ -1,9 +1,8 @@
-class Solution:
-    def __init__(self, input_path: str):
-        with open(input_path, "r+") as f:
-            self.input_contents = f.readlines()
+from template import Solution
 
-    def _parse_input(self) -> tuple[list[str], list[str]]:
+
+class Six(Solution):
+    def _parse_input(self) -> tuple[list[int], list[int]]:
         assert len(self.input_contents) == 2
         timestr, diststr = self.input_contents
         times = self._parse_line(timestr)
@@ -48,4 +47,4 @@ class Solution:
 
 
 if __name__ == "__main__":
-    Solution("six.txt").main()
+    Six("six.txt").main()
